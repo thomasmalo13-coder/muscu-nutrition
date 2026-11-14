@@ -705,7 +705,7 @@ if (params.get('session')) { const [p, d] = params.get('session').split(':'); st
 if (location.search) history.replaceState(sheetOpen ? { sheet: 1 } : null, '', location.pathname);
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  let reloaded = false;
+  let reloaded = false; const hadCtrl = !!navigator.serviceWorker.controller; // pas de rechargement à la toute première installation
   navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(r => { r.update().catch(() => {}); setInterval(() => r.update().catch(() => {}), 30 * 60e3); }).catch(() => {});
-  navigator.serviceWorker.addEventListener('controllerchange', () => { if (reloaded || sheetOpen) return; reloaded = true; save(true); location.reload(); });
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadCtrl || reloaded || sheetOpen || DEMO) return; reloaded = true; save(true); location.reload(); });
 }
