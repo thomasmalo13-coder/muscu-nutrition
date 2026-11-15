@@ -103,7 +103,7 @@ $('#btnSettings').addEventListener('click', () => settingsSheet(false));
 /* ===================== Démo (aperçus uniquement, ?demo) ===================== */
 function seedDemo() {
   const now = Date.now(), k0 = ymd(new Date()); S = DEF();
-  S.profile = { name: 'Yann', sex: 'H', age: 32, height: 178, weight: 78.9, activity: 1.55, goal: 'masse', level: 'inter', equip: ['barre', 'halteres'] }; S.fam = { pull: 2 };
+  S.profile = { name: 'Alex', sex: 'H', age: 32, height: 178, weight: 78.9, activity: 1.55, goal: 'masse', level: 'inter', equip: ['barre', 'halteres'] }; S.fam = { pull: 2 };
   for (let i = 56; i >= 0; i -= 2) S.weights.push({ date: addDays(k0, -i), kg: Math.round((77.2 + (56 - i) * 0.03 + Math.sin(i) * 0.2) * 10) / 10 });
   const p = progById('h-fb'); let di = 0, n = 0;
   for (let i = 38; i >= 1; i--) {
