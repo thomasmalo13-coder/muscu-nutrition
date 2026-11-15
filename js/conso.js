@@ -14,7 +14,7 @@ function daysWithout(t) { let last = null; for (const e of S.conso) if (e.t === 
 let consoDayK = null;
 RENDER.conso = function () {
   const el = $('#s-conso'), td = dayKey(), k = consoDayK || td, c = consoDay(k), P = S.settings.prices;
-  let h = `<h2>Conso</h2>`;
+  let h = tabHead('conso', 'Conso', 'Garder la main, sereinement');
   h += `<div class="card"><div class="daynav"><button class="icon-btn" data-act="cday" data-d="-1" aria-label="Jour précédent">${ICON.left}</button><div class="dn">${esc(dayLabel(k))}<small>${eur(consoCost(c))} ce jour</small></div><button class="icon-btn" data-act="cday" data-d="1" aria-label="Jour suivant" ${k >= td ? 'disabled' : ''}>${ICON.right}</button></div></div>`;
   h += `<div class="cgrid">${CONSO.map(x => `<div class="cc" style="--tc:${x.tc}"><div class="ct"><i>${x.i}</i>${x.n}</div><div class="cn" id="cn-${x.id}">${fr(c[x.id], 1)}</div><div class="cu">${x.u} · ${eur(c[x.id] * P[x.id])}</div><div class="cb"><button data-act="cminus" data-t="${x.id}" aria-label="Retirer">−</button><button class="plus" data-act="cplus" data-t="${x.id}" aria-label="Ajouter">+${x.step < 1 ? '<span class="st">' + fr(x.step, 1) + ' g</span>' : ''}</button></div></div>`).join('')}</div>`;
   const days = Array.from({ length: 7 }, (_, i) => addDays(td, i - 6)), wk7 = sumDays(td, 7), month = sumDays(td, 30);

@@ -112,7 +112,7 @@ document.addEventListener('click', e => { if (e.target.id === 'toastBtn' && undo
 function buzz(p = 10) { try { navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate(p); } catch {} }
 function applyTheme() {
   let t = S.settings.theme; if (t === 'auto') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-  document.documentElement.dataset.theme = t; const m = $('#themeColor'); if (m) m.content = t === 'light' ? '#f4f3ef' : '#0e1013';
+  document.documentElement.dataset.theme = t; const m = $('#themeColor'); if (m) m.content = t === 'light' ? '#f6f2ec' : '#0f1015'; if (typeof applyAmbient === 'function') applyAmbient();
 }
 matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { if (S.settings.theme === 'auto') { applyTheme(); render(); } });
 window.addEventListener('scroll', () => $('.top').classList.toggle('scrolled', scrollY > 4), { passive: true });
@@ -188,13 +188,13 @@ function lineChart(points, { color = 'var(--acc)', unit = '', h = 180, dec = 1, 
   if (target != null) g += `<line x1="${L}" x2="${W - R}" y1="${Y(target)}" y2="${Y(target)}" style="stroke:var(--mut)" stroke-width="1.2" stroke-dasharray="4 5" opacity=".7"/><text class="ax" x="${L + 4}" y="${Y(target) - 6}">objectif ${fr(target, dec)}${unit}</text>`;
   if (proj) { const lp = pts[pts.length - 1]; g += `<path d="M${lp[0]},${lp[1]} L${X(proj.x)},${Y(proj.y)}" style="stroke:${color}" stroke-width="2" stroke-dasharray="3 5" opacity=".6"/><circle cx="${X(proj.x)}" cy="${Y(proj.y)}" r="4" style="fill:var(--s1);stroke:${color}" stroke-width="2"/>`; }
   const last = pts.length - 1;
-  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:${color};stop-opacity:.22"/><stop offset="1" style="stop-color:${color};stop-opacity:0"/></linearGradient></defs>${g}<path d="${area}" fill="url(#${id})" class="ar"/><path d="${path}" class="ln draw" pathLength="1000" style="stroke:${color};--len:1000"/><circle cx="${pts[last][0]}" cy="${pts[last][1]}" r="4.5" class="ar" style="fill:var(--s1);stroke:${color}" stroke-width="2.4"/><text x="${clamp(pts[last][0], L + 30, W - R)}" y="${Math.max(pts[last][1] - 11, 11)}" text-anchor="end" class="ar" style="fill:var(--txt);font-size:12px;font-weight:600">${fr(ys[last], dec)}${unit}</text></svg></div>`;
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:${color};stop-opacity:.34"/><stop offset="1" style="stop-color:${color};stop-opacity:0"/></linearGradient></defs>${g}<path d="${area}" fill="url(#${id})" class="ar"/><path d="${path}" class="ln draw" pathLength="1000" style="stroke:${color};--len:1000"/><circle cx="${pts[last][0]}" cy="${pts[last][1]}" r="4.5" class="ar" style="fill:var(--s1);stroke:${color}" stroke-width="2.4"/><text x="${clamp(pts[last][0], L + 30, W - R)}" y="${Math.max(pts[last][1] - 11, 11)}" text-anchor="end" class="ar" style="fill:var(--txt);font-size:12px;font-weight:600">${fr(ys[last], dec)}${unit}</text></svg></div>`;
 }
 function barChart(days, { h = 160, target = null, unitFmt = v => fr(v) } = {}) {
   const W = 360, H = h, L = 36, R = 6, T = 10, B = 24;
   const tots = days.map(d => d.segs.reduce((s, x) => s + x.v, 0));
   const nr = niceRange(0, Math.max(...tots, target || 0, 0.0001) * 1.05, 3), Y = v => T + (1 - v / nr.hi) * (H - T - B);
-  const bw = (W - L - R) / days.length, w = Math.min(26, bw * 0.56);
+  const bw = (W - L - R) / days.length, w = Math.min(26, bw * 0.56), sid = 'sh' + (++gid);
   let g = '';
   for (let v = 0; v <= nr.hi + 1e-9; v += nr.step) g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}"/><text class="ax" x="${L - 7}" y="${Y(v) + 3.5}" text-anchor="end">${unitFmt(v)}</text>`;
   days.forEach((d, i) => {
@@ -202,14 +202,14 @@ function barChart(days, { h = 160, target = null, unitFmt = v => fr(v) } = {}) {
     segs.forEach((s, j) => {
       const y1 = Y(acc + s.v), y0 = Y(acc), hh = Math.max(0, y0 - y1), r = Math.min(5, hh); acc += s.v;
       const st = `fill:${s.c};animation-delay:${i * 35}ms`;
-      if (j === segs.length - 1) g += `<path class="bb" d="M${cx - w / 2},${y0} V${y1 + r} Q${cx - w / 2},${y1} ${cx - w / 2 + r},${y1} H${cx + w / 2 - r} Q${cx + w / 2},${y1} ${cx + w / 2},${y1 + r} V${y0} Z" style="${st}"/>`;
+      if (j === segs.length - 1) { const dd = `M${cx - w / 2},${y0} V${y1 + r} Q${cx - w / 2},${y1} ${cx - w / 2 + r},${y1} H${cx + w / 2 - r} Q${cx + w / 2},${y1} ${cx + w / 2},${y1 + r} V${y0} Z`; g += `<path class="bb" d="${dd}" style="${st}"/><path class="bb sheen" d="${dd}" style="fill:url(#${sid});animation-delay:${i * 35}ms"/>`; }
       else g += `<rect class="bb" x="${cx - w / 2}" y="${y1}" width="${w}" height="${hh + 0.5}" style="${st}"/>`;
     });
     if (!segs.length) g += `<rect x="${cx - w / 2}" y="${Y(0) - 3}" width="${w}" height="3" rx="1.5" style="fill:var(--s3)"/>`;
     g += `<text class="ax" x="${cx}" y="${H - 6}" text-anchor="middle" ${d.hi ? 'style="fill:var(--txt);font-weight:700"' : ''}>${d.l}</text>`;
   });
   if (target > 0) g += `<line x1="${L}" x2="${W - R}" y1="${Y(target)}" y2="${Y(target)}" style="stroke:var(--mut)" stroke-width="1.2" stroke-dasharray="4 5" opacity=".8"/>`;
-  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg></div>`;
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img"><defs><linearGradient id="${sid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>${g}</svg></div>`;
 }
 function donut(parts, size = 132, label = '', sub = '') {
   const tot = parts.reduce((s, p) => s + p.v, 0), r = size / 2 - 10, c = 2 * Math.PI * r; let off = 0;
@@ -218,7 +218,7 @@ function donut(parts, size = 132, label = '', sub = '') {
 }
 function ring(val, max, label, sub, { size = 128, stroke = 11, color = 'var(--acc)', warnOver = true } = {}) {
   const r = size / 2 - stroke / 2 - 1, c = 2 * Math.PI * r, pct = max > 0 ? Math.min(val / max, 1) : 0, over = warnOver && max > 0 && val > max * 1.05;
-  return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle class="trk" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke-width="${stroke}"/><circle class="val" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" style="stroke:${over ? 'var(--bad)' : color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-off="${c * (1 - pct)}"/></svg><div class="ctr"><b>${label}</b>${sub ? `<span>${sub}</span>` : ''}</div></div>`;
+  return `<div class="ring" style="width:${size}px;height:${size}px"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}"><circle class="trk" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke-width="${stroke}"/><defs><linearGradient id="rg${++gid}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" style="stop-color:color-mix(in srgb, ${over ? 'var(--bad)' : color} 55%, #fff)"/><stop offset="1" style="stop-color:${over ? 'var(--bad)' : color}"/></linearGradient></defs><circle class="val" cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" style="stroke:url(#rg${gid})" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c}" data-off="${c * (1 - pct)}"/></svg><div class="ctr"><b>${label}</b>${sub ? `<span>${sub}</span>` : ''}</div></div>`;
 }
 function animateIn(root) {
   const go = () => { $$('.ring .val', root).forEach(e => e.style.strokeDashoffset = e.dataset.off); $$('.bar i[data-w]', root).forEach(e => e.style.width = e.dataset.w); };

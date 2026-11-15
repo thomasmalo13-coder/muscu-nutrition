@@ -49,7 +49,7 @@ RENDER.sport = function () {
   const el = $('#s-sport');
   if (S.active) return rSession(el);
   const nw = nextWorkout(), eq = equip();
-  let h = `<h2>Sport maison</h2>`;
+  let h = tabHead('sport', 'Sport maison', 'Ton salon est ta salle');
   h += `<div class="card accent hero"><div class="eyebrow">Prochaine séance · ${esc(nw.p.name)}</div><div class="big">${esc(nw.d.n)}</div><p class="lead">${nw.list.length} exercices · ${esc(exNames(nw.list))}</p><div class="actions"><button class="btn pri" data-act="start" data-p="${nw.p.id}" data-d="${nw.di}">${ICON.play} Démarrer</button><button class="btn" data-act="start" data-p="h-express" data-d="0">${ICON.clock} 20 min</button></div></div>`;
   h += `<div class="card"><div class="h-row" style="margin-bottom:12px"><h3>Mon niveau et mon matériel</h3><button class="link" data-act="equipEdit">Modifier</button></div><div class="seg" id="lvSeg">${LEVELS.map(([k, l]) => `<button data-act="setLevel" data-v="${k}" class="${level() === k ? 'on' : ''}">${l}</button>`).join('')}</div><div class="equip">${eq.length ? eq.map(k => `<span class="badge acc">${EQUIP.find(e => e[0] === k)[1]}</span>`).join('') : '<span class="badge">Sans matériel</span>'}</div><p class="dim small" style="margin-top:10px">Les exercices s’adaptent à ton matériel. Quand tu réussis toutes tes séries au palier, l’appli te passe à la variante plus dure.</p></div>`;
   h += `<div class="card"><h3>Programmes maison</h3>${HOME.map(p => progCard(p)).join('')}</div>`;

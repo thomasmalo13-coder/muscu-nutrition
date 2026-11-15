@@ -433,3 +433,151 @@ body.has-timer main{padding-bottom:calc(var(--nav) + var(--safe-b) + 96px)}
 .badge svg{width:12px;height:12px;stroke-width:2.6;vertical-align:-1px;margin-right:2px}
 .rcp .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3}
 .grid3 .stat .v{font-size:19px}
+
+/* =====================================================================
+   v4 — « Aube » : identité éditoriale chaude, ciel ambiant selon l'heure
+   ===================================================================== */
+@font-face{font-family:"Fraunces";src:url(fonts/fraunces.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{--disp:"Fraunces",Georgia,"Times New Roman",serif;--dock:10px;--r:22px;--r2:15px;
+  --c1:#7ea7d8; --c2:#e08f6f; --c3:#dcb35a; --c4:#a493dc; --c5:#62b8ad; --c6:#d48bb1; --c7:#8db866; --c8:#bb9b78; --c9:#8d96a6}
+[data-theme=light]{
+  --bg:#f6f2ec; --s1:#fffdf9; --s2:#f3eee6; --s3:#e6dfd4; --line:rgba(70,45,20,.09); --line2:rgba(70,45,20,.16);
+  --txt:#1f1b17; --mut:#5f5750; --dim:#8f857a;
+  --acc:#24876b; --acc2:#1b6f57; --on-acc:#fff; --acc-soft:rgba(36,135,107,.11);
+  --brand:#d4613a; --brand-soft:rgba(212,97,58,.12);
+  --warn:#b26d1e; --bad:#c2423b; --warn-soft:rgba(178,109,30,.11); --bad-soft:rgba(194,66,59,.1);
+  --p:#cf6747; --c:#4a7fc0; --f:#b0861f;
+  --glass:rgba(255,253,249,.78); --glass-b:rgba(255,255,255,.75);
+  --sh:0 1px 1px rgba(70,45,20,.04),0 12px 32px -14px rgba(90,55,20,.22);
+  --hdr:rgba(246,242,236,.8);
+}
+[data-theme=dark]{
+  --bg:#0f1015; --s1:#181a21; --s2:#1f222b; --s3:#2b2f3a; --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.13);
+  --txt:#f2eee8; --mut:#ada79f; --dim:#78726b;
+  --acc:#5ccaa4; --acc2:#45b08b; --on-acc:#05140e; --acc-soft:rgba(92,202,164,.13);
+  --brand:#f39a72; --brand-soft:rgba(243,154,114,.13);
+  --warn:#e8ad5e; --bad:#ec8572; --warn-soft:rgba(232,173,94,.13); --bad-soft:rgba(236,133,114,.13);
+  --glass:rgba(26,28,36,.76); --glass-b:rgba(255,255,255,.06);
+  --sh:0 1px 0 rgba(255,255,255,.04) inset,0 16px 36px -14px rgba(0,0,0,.6);
+  --hdr:rgba(15,16,21,.78);
+}
+/* Ciel ambiant : 4 moments × 2 thèmes */
+[data-theme=light][data-amb=dawn]{--sky-a:#ffd2b8;--sky-b:#fbe4da;--sun:#ffb48a}
+[data-theme=light][data-amb=day]{--sky-a:#cfe2f1;--sky-b:#ecf0ee;--sun:#ffe9a8}
+[data-theme=light][data-amb=dusk]{--sky-a:#f6c3a2;--sky-b:#efd9e2;--sun:#f49a74}
+[data-theme=light][data-amb=night]{--sky-a:#c7cbe6;--sky-b:#e8e5ee;--sun:#dfe3ff}
+[data-theme=dark][data-amb=dawn]{--sky-a:#3d2333;--sky-b:#22181f;--sun:#c9664c}
+[data-theme=dark][data-amb=day]{--sky-a:#1b2b3c;--sky-b:#151b24;--sun:#4f7fa8}
+[data-theme=dark][data-amb=dusk]{--sky-a:#3e2a2a;--sky-b:#1f1820;--sun:#b9693f}
+[data-theme=dark][data-amb=night]{--sky-a:#171b36;--sky-b:#11131f;--sun:#3b4380}
+html{background:var(--bg)}
+body{background:transparent;position:relative}
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:620px;z-index:-1;pointer-events:none;
+  background:radial-gradient(90% 60% at 88% -6%,color-mix(in srgb,var(--sun,var(--acc)) 55%,transparent),transparent 62%),linear-gradient(180deg,var(--sky-a,var(--bg)) 0,var(--sky-b,var(--bg)) 42%,var(--bg) 100%);transition:background .6s}
+
+/* Typo éditoriale */
+h2,.hero .big,.amount,.ring .ctr b,.stat .v,.cc .cn,.celebrate h2,.hello .title,.scene-t b,.th h2,.wv b,.bdg .be + b{font-family:var(--disp);font-optical-sizing:auto}
+h2{font-size:30px;font-weight:600;letter-spacing:-.015em}
+.hello .title{font-size:22px;font-weight:600;letter-spacing:-.01em}
+.hero .big{font-size:28px;font-weight:600;letter-spacing:-.01em;line-height:1.12}
+.stat .v{font-weight:600;letter-spacing:-.01em}
+.ring .ctr b{font-weight:600}
+.amount{font-weight:600;letter-spacing:-.02em}
+.cc .cn{font-weight:600}
+.sheet h2{font-size:24px}
+h3{font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--mut)}
+.eyebrow{color:var(--brand);font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700}
+.bdg b,.mini .t,.goal .gt{font-family:inherit}
+
+/* En-tête transparent sur le ciel, verre au défilement */
+.top{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
+.top.scrolled{background:var(--hdr);backdrop-filter:saturate(1.5) blur(18px);-webkit-backdrop-filter:saturate(1.5) blur(18px)}
+.icon-btn{background:var(--glass);border-color:var(--glass-b);box-shadow:var(--sh)}
+
+/* Cartes : verre doux */
+.card{background:var(--glass);border:1px solid var(--glass-b);box-shadow:var(--sh);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2)}
+.card.accent,.hero{position:relative;overflow:hidden}
+[data-theme=light] .card.accent{background:linear-gradient(135deg,#fff3ea 0%,#fde4d7 48%,#f5e6ef 100%);border-color:rgba(255,255,255,.8)}
+[data-theme=dark] .card.accent{background:linear-gradient(135deg,#2c2130 0%,#211c27 55%,#18242a 100%)}
+.card.accent::after{content:"";position:absolute;right:-46px;top:-46px;width:150px;height:150px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--brand) 32%,transparent),transparent 68%);pointer-events:none}
+.card.accent > *{position:relative;z-index:1}
+.sheet .card{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--s2);border:0;box-shadow:none}
+.sheet{background:var(--s1);box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+
+/* Boutons */
+.btn{border-radius:15px}
+.btn.pri{background:linear-gradient(180deg,color-mix(in srgb,var(--acc) 82%,#fff),var(--acc));border-color:transparent;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--acc) 80%,transparent),inset 0 1px 0 rgba(255,255,255,.25)}
+.btn.pri:active{background:var(--acc2);transform:scale(.97)}
+.btn.soft{background:var(--acc-soft);border-color:transparent;color:var(--acc)}
+.hero .btn:not(.pri){background:color-mix(in srgb,var(--s1) 70%,transparent);border-color:var(--glass-b)}
+.link{color:var(--acc)}
+.chip.on,.seg button.on{box-shadow:0 4px 12px -6px rgba(0,0,0,.25)}
+
+/* Dock de navigation flottant */
+.tabs{left:10px;right:10px;bottom:calc(var(--dock) + var(--safe-b));height:var(--nav);padding:6px 4px;border-radius:24px;background:var(--glass);border:1px solid var(--glass-b);box-shadow:0 18px 40px -14px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.06);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5);max-width:620px;margin:0 auto}
+.tabs button{position:relative;gap:3px;font-size:10.5px;color:var(--dim)}
+.tabs button::before{content:"";position:absolute;top:4px;left:50%;width:48px;height:30px;margin-left:-24px;border-radius:12px;background:var(--acc-soft);transform:scale(.6);opacity:0;transition:transform .35s var(--ease),opacity .25s}
+.tabs button.active::before{transform:none;opacity:1}
+.tabs button svg{position:relative;width:24px;height:24px;margin-top:2px}
+.tabs svg .fd{fill:currentColor;stroke:none;opacity:0;transition:opacity .3s}
+.tabs button.active svg .fd{opacity:.24}
+.tabs button.active{color:var(--acc)}
+.tabs button span{position:relative}
+main{padding-bottom:calc(var(--nav) + var(--dock) + var(--safe-b) + 30px)}
+.timer{bottom:calc(var(--nav) + var(--dock) + var(--safe-b) + 12px);background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+body.has-timer main{padding-bottom:calc(var(--nav) + var(--dock) + var(--safe-b) + 100px)}
+
+/* En-têtes illustrés des onglets */
+.th{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:2px 2px 6px;min-height:84px}
+.th-t{min-width:0;padding-bottom:4px}
+.th-k{font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--brand)}
+.th h2{margin:4px 0 0;font-size:32px;line-height:1.05}
+.th-art{width:120px;height:80px;flex:none;stroke:var(--txt);stroke-width:2;opacity:.9;overflow:visible}
+.th-art .f-a{fill:color-mix(in srgb,var(--acc) 26%,transparent);stroke:none}
+.th-art .f-b{fill:color-mix(in srgb,var(--brand) 24%,transparent);stroke:none}
+.screen.active .th-art{animation:floaty 6s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-3px)}}
+
+/* Scène d'accueil : ciel, collines, route, camionnette */
+.scene{position:relative;height:150px;border-radius:var(--r);overflow:hidden;background:linear-gradient(180deg,var(--sky-a),var(--sky-b));border:1px solid var(--glass-b);box-shadow:var(--sh)}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;stroke:none}
+.scene .sun{fill:var(--sun);filter:brightness(1.08)}
+[data-theme=light] .scene .sun{fill:color-mix(in srgb,var(--sun) 80%,#ff8a50)}
+.scene .sun-glow{fill:color-mix(in srgb,var(--sun) 40%,transparent);animation:pulse 5s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.08);opacity:.75}}
+.scene .sun-glow{transform-box:fill-box;transform-origin:center}
+.scene .moon{fill:#f4efe2} .scene .moon-cut{fill:var(--sky-a)}
+.scene .star{fill:#fff;opacity:.8;animation:twinkle 3s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.25}}
+.scene .h1{fill:color-mix(in srgb,var(--acc) 22%,var(--sky-b))}
+.scene .h2{fill:color-mix(in srgb,var(--acc) 38%,var(--sky-b))}
+.scene .road{fill:color-mix(in srgb,var(--txt) 22%,var(--sky-b))}
+.scene .lane{fill:none;stroke:color-mix(in srgb,var(--sky-b) 70%,#fff);stroke-width:1.4;opacity:.7}
+.scene .vb{fill:var(--brand)} .scene .vw{fill:color-mix(in srgb,#fff 70%,var(--sky-a))} .scene .wh{fill:var(--txt)}
+.scene .cross{stroke:#fff;stroke-width:1.6;fill:none}
+.scene .beam{fill:#ffe9a8;opacity:.28}
+.scene .van{animation:drive 7s ease-in-out infinite}
+@keyframes drive{50%{transform:translate(214px,111px)}}
+.scene-t{position:absolute;left:18px;top:16px;right:120px}
+.scene-t b{display:block;font-size:22px;font-weight:600;line-height:1.1;letter-spacing:-.01em}
+.scene-t span{display:block;font-size:13px;color:var(--mut);margin-top:4px;line-height:1.35}
+.scene-t em{display:inline-block;font-style:normal;font-size:12px;font-weight:700;margin-top:8px;padding:3px 9px;border-radius:999px;background:color-mix(in srgb,var(--s1) 65%,transparent);color:var(--acc)}
+
+/* Graphiques et anneaux */
+.chart .ln{stroke-width:2.6}
+.chart .sheen{pointer-events:none}
+.ring .trk{stroke:color-mix(in srgb,var(--txt) 9%,transparent)}
+.bar{background:color-mix(in srgb,var(--txt) 8%,transparent)}
+.bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 65%,#fff),var(--acc))}
+.stat,.card .stat{background:color-mix(in srgb,var(--s2) 78%,transparent)}
+.item,.goal,.rcp,.check,.mini{border-radius:var(--r2)}
+
+/* Entrée des cartes en cascade */
+.screen.active > *{animation:rise .55s var(--ease) both}
+.screen.active > *:nth-child(2){animation-delay:.04s} .screen.active > *:nth-child(3){animation-delay:.08s} .screen.active > *:nth-child(4){animation-delay:.12s}
+.screen.active > *:nth-child(5){animation-delay:.16s} .screen.active > *:nth-child(6){animation-delay:.2s} .screen.active > *:nth-child(n+7){animation-delay:.24s}
+@keyframes rise{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+.celebrate .cbox{border-radius:28px;background:linear-gradient(160deg,color-mix(in srgb,var(--brand) 14%,var(--s1)),var(--s1) 60%)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.chart .draw{stroke-dashoffset:0}.chart .ar{opacity:1}}
+.noanim .screen.active > *{animation:none!important}
+h3.disp-t{margin:2px 0 0;font-family:var(--disp);font-size:22px;font-weight:600;letter-spacing:-.01em;text-transform:none;color:var(--txt)}

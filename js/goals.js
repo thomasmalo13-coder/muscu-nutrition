@@ -164,7 +164,7 @@ function checkGoals() {
 let goalsView = 'goals', goalsFilter = 'all';
 RENDER.goals = function () {
   const el = $('#s-goals');
-  let h = `<h2>Objectifs</h2><div class="seg"><button class="${goalsView === 'goals' ? 'on' : ''}" data-act="gview" data-v="goals">Objectifs</button><button class="${goalsView === 'troph' ? 'on' : ''}" data-act="gview" data-v="troph">Trophées</button><button class="${goalsView === 'suivi' ? 'on' : ''}" data-act="gview" data-v="suivi">Poids & bilan</button></div>`;
+  let h = tabHead('goals', 'Objectifs', 'Un pas après l’autre') + `<div class="seg"><button class="${goalsView === 'goals' ? 'on' : ''}" data-act="gview" data-v="goals">Objectifs</button><button class="${goalsView === 'troph' ? 'on' : ''}" data-act="gview" data-v="troph">Trophées</button><button class="${goalsView === 'suivi' ? 'on' : ''}" data-act="gview" data-v="suivi">Poids & bilan</button></div>`;
   h += goalsView === 'goals' ? goalsHtml() : goalsView === 'troph' ? trophiesHtml() : suiviHtml() + sleepWaterCard() + monthReviewCard() + measuresCard() + photosCard();
   el.innerHTML = h; animateIn(el); hydratePhotos(el);
 };

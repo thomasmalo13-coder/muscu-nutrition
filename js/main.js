@@ -2,7 +2,7 @@
 /* ===================== ACCUEIL ===================== */
 RENDER.home = function () {
   const el = $('#s-home'), k = dayKey(), T = targets(), tot = dayTotals(k);
-  let h = reminderChips();
+  let h = homeScene() + reminderChips();
   const ciOn = S.profile && checkinVisible(); if (ciOn) h += checkinCard();
   if (!S.profile) h += `<div class="card accent"><div class="eyebrow">Bienvenue</div><div class="hero"><div class="big">Sport maison, repas, budget : tout au même endroit</div></div><p class="lead">Renseigne ton profil (1 minute) pour avoir tes besoins en calories, un programme adapté à ton matériel et des objectifs sur mesure.</p><button class="btn pri block" data-act="profile" style="margin-top:16px">Créer mon profil</button></div>`;
   if (S.active) h += `<div class="card accent hero"><div class="eyebrow">Séance en cours</div><div class="big">${esc(S.active.name.split(' · ')[0])}</div><p class="lead">${S.active.exercises.reduce((s, e) => s + e.sets.filter(x => x.done).length, 0)} séries faites · commencée à ${new Date(S.active.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p><div class="actions"><button class="btn pri" data-act="goto" data-tab="sport">${ICON.play} Reprendre</button></div></div>`;
@@ -142,7 +142,7 @@ function seedDemo() {
 
 /* ===================== Démarrage ===================== */
 load(); migrateWorkouts();
-if (DEMO) { seedDemo(); if (params.get('theme')) S.settings.theme = params.get('theme'); if (params.has('fresh')) { S = DEF(); } }
+if (DEMO) { seedDemo(); if (params.has('fresh')) { S = DEF(); } if (params.get('theme')) S.settings.theme = params.get('theme'); }
 applyTheme();
 if (params.has('noanim')) document.documentElement.classList.add('noanim');
 const qTab = params.get('tab');

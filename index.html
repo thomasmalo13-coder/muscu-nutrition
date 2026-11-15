@@ -3,7 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0e1013" id="themeColor">
+<meta name="theme-color" content="#0f1015" id="themeColor">
+<link rel="preload" href="fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <meta name="description" content="Sport maison, nutrition, objectifs et budget — hors connexion et privé">
 <title>Muscu & Nutrition</title>
 <link rel="manifest" href="manifest.webmanifest">
@@ -11,7 +13,7 @@
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="preload" href="fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
 <script>
-(function(){try{var s=JSON.parse(localStorage.getItem('muscuNutri.v1')||'{}');var t=(s.settings&&s.settings.theme)||'auto';if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();
+(function(){try{var hh=new Date().getHours();document.documentElement.dataset.amb=hh>=5&&hh<10?'dawn':hh>=10&&hh<17?'day':hh>=17&&hh<21?'dusk':'night';var s=JSON.parse(localStorage.getItem('muscuNutri.v1')||'{}');var t=(s.settings&&s.settings.theme)||'auto';if(t==='auto')t=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.dataset.theme=t;}catch(e){document.documentElement.dataset.theme='dark';}})();
 </script>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -31,12 +33,12 @@
   </main>
   <div id="timer" class="timer hidden" role="timer" aria-live="polite"></div>
   <nav class="tabs" id="tabs">
-    <button data-tab="home" class="active"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20a1 1 0 0 1-1 1h-4.5v-6h-5v6H5a1 1 0 0 1-1-1Z"/></svg><span>Accueil</span></button>
-    <button data-tab="sport"><svg viewBox="0 0 24 24"><path d="M6.5 7v10M17.5 7v10M3.5 9.5v5M20.5 9.5v5M6.5 12h11"/></svg><span>Sport</span></button>
-    <button data-tab="repas"><svg viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v6M9 3v6M17 21V3c-2.5 1-3.5 4-3.5 7.5 0 2 1 3 3.5 3"/></svg><span>Repas</span></button>
-    <button data-tab="goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r=".8"/></svg><span>Objectifs</span></button>
-    <button data-tab="budget"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10h18M16 14.5h2"/></svg><span>Budget</span></button>
-    <button data-tab="conso"><svg viewBox="0 0 24 24"><path d="M3 15h14v3H3zM19.5 15v3M19.5 12c0-2-2-2-2-4s1.5-2 1.5-4"/></svg><span>Conso</span></button>
+    <button data-tab="home" class="active"><svg viewBox="0 0 24 24"><path class="fd" d="M6 10.2 12 5.4l6 4.8V20H6Z"/><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9v11h12V9"/><path d="M10 20v-4.5a2 2 0 0 1 4 0V20"/></svg><span>Accueil</span></button>
+    <button data-tab="sport"><svg viewBox="0 0 24 24"><circle class="fd" cx="12" cy="15" r="5.6"/><circle cx="12" cy="15" r="5.6"/><path d="M8.2 10.9V8.4a3.8 3.8 0 0 1 7.6 0v2.5"/><path d="M9.6 15.6a2.6 2.6 0 0 0 2.4 2"/></svg><span>Sport</span></button>
+    <button data-tab="repas"><svg viewBox="0 0 24 24"><path class="fd" d="M3.5 12h17a8.5 7.5 0 0 1-17 0Z"/><path d="M3.5 12h17a8.5 7.5 0 0 1-17 0Z"/><path d="M9 20.5h6"/><path d="M9.5 8.8c-1.1-1.3 1.1-2.4 0-3.8M13.5 8.8c-1.1-1.3 1.1-2.4 0-3.8"/></svg><span>Repas</span></button>
+    <button data-tab="goals"><svg viewBox="0 0 24 24"><path class="fd" d="M2.5 20 9 9.5l3.6 5.4 2.6-3.4L21.5 20Z"/><path d="M2.5 20 9 9.5l3.6 5.4 2.6-3.4L21.5 20Z"/><path d="M15.2 11.5V3.8l4.3 1.7-4.3 1.7"/></svg><span>Objectifs</span></button>
+    <button data-tab="budget"><svg viewBox="0 0 24 24"><path class="fd" d="M4.5 8.5h13a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2Z"/><path d="M4.5 7.5a2 2 0 0 1 2-2h9M4.5 7.5V18a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-7.5a2 2 0 0 0-2-2h-13"/><circle cx="15.5" cy="14.2" r="1.3"/></svg><span>Budget</span></button>
+    <button data-tab="conso"><svg viewBox="0 0 24 24"><path class="fd" d="M12 13.5C12 8.5 8.3 5.5 4 5.5c0 4.6 3.3 8 8 8Z"/><path d="M12 13.5C12 8.5 8.3 5.5 4 5.5c0 4.6 3.3 8 8 8Z"/><path d="M12 13c0-3.6 2.9-6.2 7-6.2 0 3.6-3 6.2-7 6.2Z"/><path d="M12 21v-8"/></svg><span>Conso</span></button>
   </nav>
   <div id="sheetWrap" class="sheet-wrap" aria-hidden="true"><div class="backdrop"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div><div id="sheetBody"></div></div></div>
   <div id="celebrate" class="celebrate hidden" role="dialog" aria-modal="true"></div>
@@ -45,6 +47,7 @@
 <script src="foods.js"></script>
 <script src="js/exercises.js"></script>
 <script src="js/core.js"></script>
+<script src="js/theme.js"></script>
 <script src="js/sport.js"></script>
 <script src="js/repas.js"></script>
 <script src="js/goals.js"></script>

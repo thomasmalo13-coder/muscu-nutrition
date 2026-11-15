@@ -49,7 +49,7 @@ function sleepPlan() {
 function checkinCard() {
   const k = dayKey(), ci = S.checkin[k] || {}, adv = sessionAdvice(ci), sp = sleepPlan(), T = targets(), tot = dayTotals(k);
   const kLeft = T ? Math.max(0, T.kcal - tot.kcal) : 0, pLeft = T ? Math.max(0, T.p - tot.p) : 0, rec = suggestRecipe(kLeft, pLeft);
-  return `<div class="card checkin"><div class="h-row"><div><div class="eyebrow">Retour de tournée</div><h3 style="margin:2px 0 0;font-size:19px;color:var(--txt)">Bien rentré ? 🌅</h3></div><button class="x-btn" data-act="ciClose" aria-label="Masquer">${ICON.x}</button></div>
+  return `<div class="card checkin"><div class="h-row"><div><div class="eyebrow">Retour de tournée</div><h3 class="disp-t">Bien rentré ? 🌅</h3></div><button class="x-btn" data-act="ciClose" aria-label="Masquer">${ICON.x}</button></div>
   <div class="ci-row"><span>Humeur</span><div class="moods">${MOODS.map((m, i) => `<button class="${ci.mood === i + 1 ? 'on' : ''}" data-act="ci" data-f="mood" data-v="${i + 1}" aria-label="Humeur ${i + 1}">${m}</button>`).join('')}</div></div>
   <div class="ci-row"><span>Fatigue</span><div class="moods num">${[1, 2, 3, 4, 5].map(i => `<button class="${ci.fat === i ? 'on' : ''}" data-act="ci" data-f="fat" data-v="${i}" aria-label="Fatigue ${i}">${i}</button>`).join('')}</div></div>
   <div class="ci-box"><span class="ico">😴</span><div class="grow"><b>Au lit vers ${sp.bed}, lever ${sp.wake}</b><span>7 h 30 = 5 cycles. Volets fermés, téléphone loin, pas de café.</span></div></div>
