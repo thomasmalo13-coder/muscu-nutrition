@@ -2,11 +2,13 @@
 /* ===================== ACCUEIL ===================== */
 RENDER.home = function () {
   const el = $('#s-home'), k = dayKey(), T = targets(), tot = dayTotals(k);
-  let h = '';
+  let h = reminderChips();
+  const ciOn = S.profile && checkinVisible(); if (ciOn) h += checkinCard();
   if (!S.profile) h += `<div class="card accent"><div class="eyebrow">Bienvenue</div><div class="hero"><div class="big">Sport maison, repas, budget : tout au même endroit</div></div><p class="lead">Renseigne ton profil (1 minute) pour avoir tes besoins en calories, un programme adapté à ton matériel et des objectifs sur mesure.</p><button class="btn pri block" data-act="profile" style="margin-top:16px">Créer mon profil</button></div>`;
   if (S.active) h += `<div class="card accent hero"><div class="eyebrow">Séance en cours</div><div class="big">${esc(S.active.name.split(' · ')[0])}</div><p class="lead">${S.active.exercises.reduce((s, e) => s + e.sets.filter(x => x.done).length, 0)} séries faites · commencée à ${new Date(S.active.start).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</p><div class="actions"><button class="btn pri" data-act="goto" data-tab="sport">${ICON.play} Reprendre</button></div></div>`;
-  else if (S.profile) { const nw = nextWorkout(), doneToday = S.workouts.some(w => w.day === k);
+  else if (S.profile && !ciOn) { const nw = nextWorkout(), doneToday = S.workouts.some(w => w.day === k);
     h += `<div class="card accent hero"><div class="eyebrow">${doneToday ? 'Séance faite aujourd’hui ✓' : 'Prochaine séance'} · ${esc(nw.p.name)}</div><div class="big">${esc(nw.d.n)}</div><p class="lead">${nw.list.length} exercices · ${esc(exNames(nw.list))}</p><div class="actions"><button class="btn pri" data-act="start" data-p="${nw.p.id}" data-d="${nw.di}">${ICON.play} Démarrer</button><button class="btn" data-act="start" data-p="h-express" data-d="0">${ICON.clock} 20 min</button></div></div>`; }
+  if (S.profile) h += formeCard();
   if (S.profile) h += homeGoalsCard();
   h += `<div class="card"><div class="h-row" style="margin-bottom:14px"><h3>Aujourd’hui</h3><button class="link" data-act="goto" data-tab="repas">Repas ${ICON.right}</button></div>${nutritionBlock(k, T, tot, true)}</div>`;
   const lw = lastWeight(), w7 = S.weights.filter(w => w.date <= addDays(today(), -7)), dW = lw && w7.length ? lw - w7[w7.length - 1].kg : null;
@@ -37,6 +39,7 @@ function settingsSheet(focusProfile) {
     <label class="f"><span>Mon matériel à la maison (rien coché = poids du corps)</span></label><div class="chips wrap" id="eqChips" style="margin-top:-6px">${EQUIP.map(([k, l]) => `<button type="button" class="chip ${eq.includes(k) ? 'on' : ''}" data-eq="${k}">${l}</button>`).join('')}</div>
     <button class="btn pri block" id="pOk">Enregistrer le profil</button></div></div>
   ${focusProfile ? '' : `<div class="card"><h3>Apparence</h3><div class="seg" id="thSeg">${[['auto', 'Auto'], ['light', 'Clair'], ['dark', 'Sombre']].map(([k, l]) => `<button type="button" data-v="${k}" class="${st.theme === k ? 'on' : ''}">${l}</button>`).join('')}</div></div>
+  ${remindersHtml()}
   <div class="card"><h3>Journée</h3><label class="f"><span>Ma journée commence à… (les repas et la conso de la nuit restent sur la même journée)</span><select class="in" id="dStart">${[0, 6, 8, 10, 12, 14, 16].map(h => `<option value="${h}" ${st.dayStart === h ? 'selected' : ''}>${h === 0 ? 'Minuit' : h + ' h'}${h === 12 ? ' (conseillé)' : ''}</option>`).join('')}</select></label></div>
   <div class="card"><h3>Conso</h3><div class="form"><div class="grid2">${CONSO.map(x => `<label class="f"><span>Prix ${priceLbl[x.id]} (€)</span><input class="in" inputmode="decimal" data-price="${x.id}" value="${String(st.prices[x.id]).replace('.', ',')}"></label>`).join('')}</div>
     <label class="f"><span>Taille d’une bière</span><select class="in" id="beerCl">${[25, 33, 50].map(v => `<option value="${v}" ${st.beerCl === v ? 'selected' : ''}>${v} cl</option>`).join('')}</select></label>
@@ -45,7 +48,7 @@ function settingsSheet(focusProfile) {
     <button class="btn soft block" id="cOk">Enregistrer</button></div></div>
   <div class="card"><h3>Repas favoris</h3><div class="list">${S.favorites.length ? S.favorites.map((f, i) => `<div class="item"><div class="grow"><div class="t">${esc(f.name)}</div><div class="s">${f.items.length} aliment${f.items.length > 1 ? 's' : ''} · ${fr(f.items.reduce((s, m) => s + m.kcal, 0))} kcal</div></div><button class="x-btn" data-act="delfav" data-i="${i}" aria-label="Supprimer">${ICON.x}</button></div>`).join('') : '<p class="dim small">Aucun. Touche l’étoile sur un repas pour l’enregistrer.</p>'}</div></div>
   <div class="card"><h3>Sauvegarde</h3><p class="mut small" style="margin-bottom:12px">Tout est stocké sur ce téléphone uniquement. Exporte un fichier de temps en temps (changement de téléphone, nettoyage…).</p><div class="grid2"><button class="btn soft" data-act="export">Exporter</button><button class="btn" data-act="import">Importer</button></div><input type="file" id="impF" accept="application/json,.json" class="hidden"><div class="sep"></div><button class="btn danger block" data-act="reset">Tout effacer</button></div>
-  <div style="text-align:center;margin:6px 0 4px"><span class="dim small">Muscu · Nutri v2 · fonctionne hors connexion</span><br><a href="#" class="foot-link" data-act="help">Aide</a></div>`}`);
+  <div style="text-align:center;margin:6px 0 4px"><span class="dim small">Muscu · Nutri v3 · fonctionne hors connexion</span><br><a href="#" class="foot-link" data-act="help">Aide</a></div>`}`);
   const read = () => ({ ...(S.profile || {}), name: $('#pName').value.trim(), sex, goal, level: lv, equip: eq, age: num($('#pAge').value) || '', height: num($('#pH').value) || '', weight: num($('#pW').value) || '', activity: num($('#pAct').value) });
   const showT = () => { const pp = read(); const t = pp.age && pp.height && pp.weight ? targets(pp) : null; $('#tgtBox').innerHTML = t ? `<div class="stat"><div class="kv"><span>Métabolisme de base</span><b>${fr(t.bmr)} kcal</b></div><div class="kv"><span>Dépense estimée</span><b>${fr(t.tdee)} kcal</b></div><div class="kv"><span>Cible ${GOALS_N[goal].toLowerCase()}</span><b class="acc">${fr(t.kcal)} kcal</b></div><div class="kv"><span>Prot. · Gluc. · Lip.</span><b>${t.p} · ${t.c} · ${t.f} g</b></div></div><p class="dim small" style="margin-top:8px">Formule Mifflin-St Jeor : estimation à ajuster selon ton poids sur 2–3 semaines.</p>` : '<p class="dim small">Renseigne âge, taille et poids pour voir tes besoins.</p>'; };
   const segBind = (id, set) => $$(`#${id} button`).forEach(b => b.onclick = () => { set(b.dataset.v); $$(`#${id} button`).forEach(x => x.classList.toggle('on', x === b)); showT(); });
@@ -60,7 +63,7 @@ function settingsSheet(focusProfile) {
     if (!S.settings.goalsSuggested) setTimeout(() => suggestSheet(true), 380);
   };
   if (!focusProfile) {
-    segBind('thSeg', v => { S.settings.theme = v; applyTheme(); save(); });
+    segBind('thSeg', v => { S.settings.theme = v; applyTheme(); save(); }); bindReminders();
     $('#dStart').onchange = e => { S.settings.dayStart = num(e.target.value); repasDay = consoDayK = null; save(); render(); toast('Enregistré'); };
     $('#alcM').onclick = e => e.currentTarget.classList.toggle('on'); $('#cBud').onclick = e => e.currentTarget.classList.toggle('on');
     $('#cOk').onclick = () => { $$('[data-price]').forEach(i => S.settings.prices[i.dataset.price] = num(i.value)); S.settings.beerCl = num($('#beerCl').value); S.settings.alcoholInMeals = $('#alcM').classList.contains('on'); S.fin.consoInBudget = $('#cBud').classList.contains('on'); save(); render(); toast('Réglages conso enregistrés'); };
@@ -92,7 +95,7 @@ Object.assign(ACT, {
 });
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
-  const f = ACT[b.dataset.act]; if (f) f(b.dataset, b, e);
+  const f = ACT[b.dataset.act]; if (f) { buzz(6); f(b.dataset, b, e); }
 });
 $$('.tabs button').forEach(b => b.addEventListener('click', () => { buzz(6); if (b.dataset.tab === 'repas') repasDay = null; if (b.dataset.tab === TAB) return window.scrollTo({ top: 0, behavior: 'smooth' }); setTab(b.dataset.tab); }));
 $('#btnSettings').addEventListener('click', () => settingsSheet(false));
@@ -129,6 +132,12 @@ function seedDemo() {
   G({ cat: 'finance', type: 'epargne', name: 'Fonds de secours', target: 300, created: addDays(k, -20), deadline: addDays(k, 70), conso: true, ms: [25] });
   G({ cat: 'finance', type: 'depenses', c: 'all', target: 1300 });
   S.settings.goalsSuggested = true;
+  for (let d = 9; d >= 0; d--) { const day = addDays(k, -d), h = [7.5, 6, 7, 5.2, 7.8, 6.5, 7.2, 4.8, 7.4, 6.8][d]; S.sleep.push({ id: uid(), day, bed: '08:15', wake: (() => { const m = 495 + Math.round(h * 60); return pad(Math.floor(m / 60) % 24) + ':' + pad(m % 60); })(), h, q: 4 }); S.water[day] = [9, 11, 8, 10, 12, 7, 11, 10, 9, 6][d]; }
+  S.water[k] = 6; S.checkin[k] = { mood: 4, fat: 3 };
+  [[63, 84.5, 34, 98], [33, 83.8, 34.6, 99], [3, 83.1, 35.2, 100.5]].forEach(([d, t, b, p]) => S.measures.push({ id: uid(), date: addDays(k, -d), taille: t, bras: b, poitrine: p }));
+  S.shop = { r: { prb: 3, oats: 4, wrapthon: 2 }, done: { 'Banane': true } };
+  S.settings.rem = { session: '16', water: true, weigh: '1' };
+  S.settings.badgesInit = false; checkBadges(); S.settings.badgesInit = true;
 }
 
 /* ===================== Démarrage ===================== */
@@ -137,8 +146,8 @@ if (DEMO) { seedDemo(); if (params.get('theme')) S.settings.theme = params.get('
 applyTheme();
 if (params.has('noanim')) document.documentElement.classList.add('noanim');
 const qTab = params.get('tab');
-if (qTab === 'suivi') goalsView = 'suivi';
-setTab(['home', 'sport', 'repas', 'goals', 'budget', 'conso'].includes(qTab) ? qTab : qTab === 'suivi' ? 'goals' : (S.active ? 'sport' : 'home'), true);
+if (qTab === 'suivi') goalsView = 'suivi'; if (qTab === 'troph') goalsView = 'troph';
+setTab(['home', 'sport', 'repas', 'goals', 'budget', 'conso'].includes(qTab) ? qTab : ['suivi', 'troph'].includes(qTab) ? 'goals' : (S.active ? 'sport' : 'home'), true);
 if (params.get('session')) { const [pp, dd] = params.get('session').split(':'); startWorkout(pp, num(dd)); if (params.has('timer')) { toggleSet(0, 0); toggleSet(0, 1); } }
 ({
   food: () => foodSheet('pre'), fooddetail: () => { foodSheet('pre'); foodDetail(FOODS.findIndex(x => x[0] === 'Blanc de poulet cuit')); },
@@ -146,6 +155,8 @@ if (params.get('session')) { const [pp, dd] = params.get('session').split(':'); 
   goal: () => goalSheet(S.goals[0] && S.goals[0].id), goalsave: () => goalSheet((S.goals.find(g => g.type === 'epargne') || {}).id), newgoal: () => goalForm(), suggest: () => { S.goals = S.goals.slice(0, 2); suggestSheet(true); },
   expense: () => moneySheet('e'), budget: () => budgetSheet(), limits: () => consoLimitsSheet(),
   cues: () => cuesSheet && S.active && cuesSheet(S.active.exercises[0].n), equip: () => equipSheet(),
+  recipes: () => recipesSheet(), recipe: () => recipeSheet('wrapthon'), shop: () => shopSheet(), sleep: () => sleepSheet(), measures: () => measuresSheet(),
+  badge: () => celebrate('🥩', 'Badge débloqué : Protéines au top', '7 jours d’affilée dans la cible.'),
   celebrate: () => celebrate('🔥', '75 % du chemin', '50 pompes d’affilée. La ligne d’arrivée est proche.')
 }[params.get('sheet')] || (() => {}))();
 if (location.search) history.replaceState(sheetOpen ? { sheet: 1 } : null, '', location.pathname);

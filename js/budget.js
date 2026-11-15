@@ -82,6 +82,6 @@ Object.assign(ACT, {
   saveAdd: d => moneySheet('s', d.g),
   budgetSet: () => budgetSheet(),
   gnewFin: () => goalForm(null, { type: 'epargne' }),
-  delExp: d => { S.fin.expenses = S.fin.expenses.filter(e => e.id !== d.id); save(); render(); toast('Dépense supprimée'); },
-  delSave: d => { S.fin.savings = S.fin.savings.filter(e => e.id !== d.id); save(); render(); toast('Épargne supprimée'); }
+  delExp: d => undoable('Dépense supprimée', () => { S.fin.expenses = S.fin.expenses.filter(e => e.id !== d.id); }),
+  delSave: d => undoable('Épargne supprimée', () => { S.fin.savings = S.fin.savings.filter(e => e.id !== d.id); })
 });

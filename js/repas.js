@@ -49,6 +49,8 @@ RENDER.repas = function () {
   const el = $('#s-repas'), k = repasDay || dayKey(), T = targets(), tot = dayTotals(k), td = dayKey();
   let h = `<h2>Repas</h2>`;
   h += `<div class="card"><div class="daynav" style="margin-bottom:16px"><button class="icon-btn" data-act="rday" data-d="-1" aria-label="Jour précédent">${ICON.left}</button><div class="dn">${esc(dayLabel(k))}<small>journée de ${S.settings.dayStart} h à ${S.settings.dayStart} h</small></div><button class="icon-btn" data-act="rday" data-d="1" aria-label="Jour suivant" ${k >= td ? 'disabled' : ''}>${ICON.right}</button></div>${nutritionBlock(k, T, tot)}${tot.alc ? `<p class="dim small" style="margin-top:12px">Dont ${fr(tot.alc)} kcal d’alcool (onglet Conso)</p>` : ''}</div>`;
+  { const kL = T ? Math.max(0, T.kcal - tot.kcal) : 600, pL = T ? Math.max(0, T.p - tot.p) : 40, r1 = suggestRecipe(kL, pL), more = RECIPES.filter(r => r !== r1 && r[5].includes('nc')).slice((new Date().getDate()) % 8, (new Date().getDate()) % 8 + 2), nS = Object.keys(S.shop.r).length;
+    h += `<div class="card"><div class="h-row" style="margin-bottom:10px"><h3>Recettes protéinées</h3><button class="link" data-act="recipes">Tout voir</button></div>${dayMeals(k).length ? '' : `<p class="dim small" style="margin:-2px 0 10px">Rien de noté pour l’instant : choisis une recette ou touche + sur un repas.</p>`}<div class="list">${[r1, ...more].map(recipeCardHtml).join('')}</div><button class="btn ghost block" data-act="shopList" style="margin-top:10px">🛒 Liste de courses${nS ? ' · ' + nS + ' recette' + (nS > 1 ? 's' : '') : ''}</button></div>`; }
   const canRepeat = dayMeals(addDays(k, -1)).length && !dayMeals(k).length;
   if (S.favorites.length || canRepeat) h += `<div class="card"><h3>Ajout rapide</h3><div class="chips">${canRepeat ? `<button class="chip" data-act="repeat">${ICON.repeat} Comme hier</button>` : ''}${S.favorites.map((f, i) => `<button class="chip" data-act="fav" data-i="${i}">${esc(f.name)}</button>`).join('')}</div></div>`;
   for (const sl of SLOTS) {
@@ -104,7 +106,7 @@ Object.assign(ACT, {
   pickfood: d => foodDetail(num(d.i)),
   backfood: () => foodSheet(foodCtx.slot),
   freefood: () => freeFood(),
-  delmeal: d => { S.meals = S.meals.filter(m => m.id !== d.id); save(); render(); },
+  delmeal: d => undoable('Aliment supprimé', () => { S.meals = S.meals.filter(m => m.id !== d.id); }),
   rday: d => { const k = addDays(repasDay || dayKey(), num(d.d)); repasDay = k >= dayKey() ? null : k; RENDER.repas(); },
   repeat: () => { const k = repasDay || dayKey(); dayMeals(addDays(k, -1)).forEach(m => S.meals.push({ ...m, id: uid(), day: k })); save(); render(); toast('Repas d’hier copiés'); },
   savefav: d => {

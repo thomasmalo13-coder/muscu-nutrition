@@ -203,7 +203,7 @@ Object.assign(ACT, {
   finish: () => finishWorkout(),
   cancel: () => { if (confirm('Abandonner la séance ? Les séries ne seront pas enregistrées.')) { S.active = null; stopTimer(); save(true); RENDER.sport(); } },
   wview: d => viewWorkout(d.id),
-  delw: d => { if (confirm('Supprimer cette séance ?')) { S.workouts = S.workouts.filter(w => w.id !== d.id); save(); closeSheet(); render(); } },
+  delw: d => { closeSheet(); undoable('Séance supprimée', () => { S.workouts = S.workouts.filter(w => w.id !== d.id); }); },
   setLevel: d => { if (!S.profile) S.profile = { sex: 'H', equip: [] }; S.profile.level = d.v; S.fam = {}; save(); RENDER.sport(); toast('Niveau : ' + LEVELS.find(l => l[0] === d.v)[1]); },
   equipEdit: () => equipSheet()
 });

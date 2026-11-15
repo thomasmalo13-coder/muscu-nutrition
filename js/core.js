@@ -42,7 +42,8 @@ const KEY = 'muscuNutri.v1';
 const DEF = () => ({
   v: 2, profile: null, workouts: [], active: null, meals: [], favorites: [], weights: [], conso: [], goals: [], fam: {},
   fin: { budget: 0, expenses: [], savings: [], consoBase: '', consoInBudget: true },
-  settings: { dayStart: 12, theme: 'auto', prices: { cig: 0.6, joint: 5, biere: 2.5, coke: 60 }, beerCl: 50, alcoholInMeals: true, lastProg: null, lastDay: -1, goalsSuggested: false, seen: {} }
+  water: {}, sleep: [], checkin: {}, measures: [], photos: [], shop: { r: {}, done: {} }, badges: {},
+  settings: { dayStart: 12, theme: 'auto', prices: { cig: 0.6, joint: 5, biere: 2.5, coke: 60 }, beerCl: 50, alcoholInMeals: true, lastProg: null, lastDay: -1, goalsSuggested: false, seen: {}, rem: { session: '', water: false, weigh: '' }, remFired: {}, badgesInit: false }
 });
 let S;
 function load() {
@@ -96,7 +97,18 @@ function renderHeader() {
   $('#topHello').textContent = (h < 5 ? 'Bonne tournée' : h < 12 ? 'Bonjour' : h < 18 ? 'Bon après-midi' : 'Bonsoir') + nm;
 }
 let toastT;
-function toast(msg, ms = 2200) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), ms); }
+let undoFn = null;
+function toast(msg, ms = 2200, action) {
+  const t = $('#toast'); undoFn = action ? action.fn : null;
+  t.innerHTML = `<span>${esc(msg)}</span>${action ? `<button type="button" id="toastBtn">${esc(action.label)}</button>` : ''}`; t.classList.toggle('act', !!action);
+  t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => { t.classList.remove('show'); undoFn = null; }, action ? Math.max(ms, 5000) : ms);
+}
+// Suppression avec « Annuler » : snapshot de l'état puis restauration
+function undoable(msg, mutate) {
+  const snap = JSON.stringify(S); mutate(); save(); render(); buzz(12);
+  toast(msg, 5000, { label: 'Annuler', fn: () => { S = JSON.parse(snap); save(); render(); toast('Restauré'); } });
+}
+document.addEventListener('click', e => { if (e.target.id === 'toastBtn' && undoFn) { const f = undoFn; undoFn = null; $('#toast').classList.remove('show'); f(); } });
 function buzz(p = 10) { try { navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive && navigator.vibrate(p); } catch {} }
 function applyTheme() {
   let t = S.settings.theme; if (t === 'auto') t = matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';

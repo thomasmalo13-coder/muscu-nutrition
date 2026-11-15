@@ -143,7 +143,7 @@ function bestKgBefore(name, wk) { let b = 0; for (const w of S.workouts) { if (w
 /* Jalons et célébrations */
 let checking = false;
 function checkGoals() {
-  if (checking || !S.goals.length || (DEMO && !params.has('celebrate'))) return; checking = true; let changed = false;
+  if (checking || (DEMO && !params.has('celebrate'))) return; checking = true; let changed = checkBadges();
   const wk = weekStart(dayKey());
   for (const g of S.goals) {
     if (g.done) continue; const st = gState(g), kind = GT[g.type].kind; g.ms = g.ms || []; g.wins = g.wins || [];
@@ -164,9 +164,9 @@ function checkGoals() {
 let goalsView = 'goals', goalsFilter = 'all';
 RENDER.goals = function () {
   const el = $('#s-goals');
-  let h = `<h2>Objectifs</h2><div class="seg"><button class="${goalsView === 'goals' ? 'on' : ''}" data-act="gview" data-v="goals">Mes objectifs</button><button class="${goalsView === 'suivi' ? 'on' : ''}" data-act="gview" data-v="suivi">Poids & bilan</button></div>`;
-  h += goalsView === 'goals' ? goalsHtml() : suiviHtml();
-  el.innerHTML = h; animateIn(el);
+  let h = `<h2>Objectifs</h2><div class="seg"><button class="${goalsView === 'goals' ? 'on' : ''}" data-act="gview" data-v="goals">Objectifs</button><button class="${goalsView === 'troph' ? 'on' : ''}" data-act="gview" data-v="troph">Trophées</button><button class="${goalsView === 'suivi' ? 'on' : ''}" data-act="gview" data-v="suivi">Poids & bilan</button></div>`;
+  h += goalsView === 'goals' ? goalsHtml() : goalsView === 'troph' ? trophiesHtml() : suiviHtml() + sleepWaterCard() + monthReviewCard() + measuresCard() + photosCard();
+  el.innerHTML = h; animateIn(el); hydratePhotos(el);
 };
 function goalRow(g) {
   const st = gState(g), col = st.tone === 'bad' ? 'var(--bad)' : st.tone === 'warn' ? 'var(--warn)' : 'var(--acc)', lim = ['limit', 'limitm'].includes(GT[g.type].kind);
@@ -313,7 +313,7 @@ Object.assign(ACT, {
   goal: d => goalSheet(d.id),
   gnew: () => goalForm(),
   gedit: d => goalForm(S.goals.find(g => g.id === d.id)),
-  gdel: d => { if (confirm('Supprimer cet objectif ?')) { S.goals = S.goals.filter(g => g.id !== d.id); save(); closeSheet(); render(); } },
+  gdel: d => { closeSheet(); undoable('Objectif supprimé', () => { S.goals = S.goals.filter(g => g.id !== d.id); }); },
   gsuggest: () => suggestSheet(),
   gtest: d => { const g = S.goals.find(x => x.id === d.id), v = num($('#testIn').value); if (!(v > 0)) return toast('Indique un résultat'); const t = Date.now(); S.workouts.push({ id: uid(), start: t, end: t, day: dayKey(t), name: `Test · ${g.ex}`, prog: null, di: -1, exercises: [{ n: g.ex, u: exUnit(g.ex), w: g.type === 'charge', rest: 0, sets: [g.type === 'reps' ? { r: v, kg: '', done: true } : { r: 1, kg: v, done: true }] }], prs: [] }); save(); closeSheet(); render(); toast('Test enregistré'); },
   addw: () => { const v = num($('#wIn').value); if (v < 25 || v > 300) return toast('Entre un poids valide'); const t = today(); S.weights = S.weights.filter(w => w.date !== t); S.weights.push({ date: t, kg: Math.round(v * 10) / 10 }); S.weights.sort((a, b) => a.date.localeCompare(b.date)); if (S.profile) S.profile.weight = v; save(); render(); toast('Poids enregistré'); },
